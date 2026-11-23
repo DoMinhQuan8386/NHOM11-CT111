@@ -4,36 +4,45 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>StudyFlow - Study Habit Tracker & Pomodoro</title>
+  <meta name="description" content="Hệ thống quản lý mục tiêu và thói quen học tập thông minh với Pomodoro, Streak, Thống kê, Huy hiệu và Phản hồi.">
+
+  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- CSS CỦA 5 THÀNH VIÊN -->
-  <link rel="stylesheet" href="css/member1-layout.css">
-  <link rel="stylesheet" href="css/member2-pomodoro.css">
-  <link rel="stylesheet" href="css/member3-stats.css">
-  <link rel="stylesheet" href="css/member4-goals.css">
-  <link rel="stylesheet" href="css/member5-theme.css">
+
+  <!-- Style CSS -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- SVG Defs Gradient dùng chung -->
+
+  <!-- SVG Defs dùng chung cho Gradients và Animations -->
   <svg width="0" height="0" style="position: absolute;">
     <defs>
       <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#60a5fa" /><stop offset="100%" stop-color="#8b5cf6" />
+        <stop offset="0%" stop-color="#60a5fa" />
+        <stop offset="100%" stop-color="#8b5cf6" />
       </linearGradient>
       <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#3b82f6" /><stop offset="50%" stop-color="#8b5cf6" /><stop offset="100%" stop-color="#ec4899" />
+        <stop offset="0%" stop-color="#3b82f6" />
+        <stop offset="50%" stop-color="#8b5cf6" />
+        <stop offset="100%" stop-color="#ec4899" />
       </linearGradient>
       <linearGradient id="barGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#8b5cf6" /><stop offset="100%" stop-color="#60a5fa" />
+        <stop offset="0%" stop-color="#8b5cf6" />
+        <stop offset="100%" stop-color="#60a5fa" />
+      </linearGradient>
+      <linearGradient id="barGradientHover" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#7c3aed" />
+        <stop offset="100%" stop-color="#3b82f6" />
       </linearGradient>
     </defs>
   </svg>
 
   <div class="app-container">
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar" id="sidebar">
       <div class="brand-wrapper">
         <div class="brand-icon">✦</div>
         <div class="brand-text">
@@ -41,86 +50,171 @@
           <p>Habit & Goal Tracker</p>
         </div>
       </div>
+
       <div class="sidebar-label">Không gian học tập</div>
-      <nav class="nav-list">
-        <button class="nav-link active" data-tab="dashboard">⌂ <span>Tổng quan</span></button>
-        <button class="nav-link" data-tab="pomodoro">⏱ <span>Pomodoro</span></button>
-        <button class="nav-link" data-tab="statistics">▥ <span>Thống kê</span></button>
-        <button class="nav-link" data-tab="goals">◎ <span>Mục tiêu</span></button>
-        <button class="nav-link" data-tab="feedback">✉ <span>Phản hồi</span></button>
+      <nav class="nav-list" role="navigation">
+        <button class="nav-link active" data-tab="dashboard">
+          <span class="nav-link-icon">⌂</span>
+          <span>Tổng quan</span>
+        </button>
+        <button class="nav-link" data-tab="pomodoro">
+          <span class="nav-link-icon">⏱</span>
+          <span>Đồng hồ Pomodoro</span>
+        </button>
+        <button class="nav-link" data-tab="statistics">
+          <span class="nav-link-icon">▥</span>
+          <span>Thống kê học tập</span>
+        </button>
+        <button class="nav-link" data-tab="goals">
+          <span class="nav-link-icon">◎</span>
+          <span>Mục tiêu học tập</span>
+        </button>
+        <button class="nav-link" data-tab="feedback">
+          <span class="nav-link-icon">✉</span>
+          <span>Phản hồi & Hỗ trợ</span>
+        </button>
       </nav>
+
       <div class="sidebar-footer">
+        <div class="sidebar-tip-card">
+          <div class="tip-header">
+            <span>💡</span>
+            <span>Mẹo học tập hôm nay</span>
+          </div>
+          <p class="tip-desc">Chia nhỏ mục tiêu lớn thành các phiên Pomodoro 25 phút giúp não bộ duy trì tập trung tối đa.</p>
+        </div>
+
         <div class="user-badge">
-          <div class="user-avatar">U</div>
+          <div class="user-avatar" id="sidebarAvatar">U</div>
           <div class="user-info-text">
-            <strong>StudyFlow Scholar</strong>
+            <strong id="sidebarUserName">StudyFlow Scholar</strong>
             <small>Chế độ học cá nhân</small>
           </div>
         </div>
       </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
+    <!-- ================= MAIN WRAPPER ================= -->
     <main class="main-wrapper">
+
+      <!-- TOPBAR -->
       <header class="topbar">
         <div class="topbar-left">
           <div class="breadcrumbs">StudyFlow / <span id="breadcrumbCurrent">Tổng quan</span></div>
           <h2 class="topbar-title" id="pageHeaderTitle">Tổng quan học tập</h2>
         </div>
+
         <div class="topbar-actions">
-          <!-- TV5 sẽ dùng nút này -->
-          <button class="theme-toggle-btn" id="themeToggleBtn">
-            <span id="themeToggleIcon">🌙</span> <span id="themeToggleText">Chế độ Tối</span>
+          <!-- NÚT CHUYỂN ĐỔI GIAO DIỆN SÁNG / TỐI SANG TRỌNG -->
+          <button class="theme-toggle-btn" id="themeToggleBtn" title="Chuyển đổi giao diện Đen Sang Trọng / Sáng">
+            <span id="themeToggleIcon">🌙</span>
+            <span id="themeToggleText">Chế độ Tối</span>
           </button>
-          <div class="today-chip"><span id="currentDateDisplay">Đang tải...</span></div>
-          <button class="btn-icon" id="quickAddSessionBtn" title="Thêm nhanh 25 phút">+</button>
+
+          <div class="today-chip" id="topbarTodayChip">
+            <span>📅</span>
+            <span id="currentDateDisplay">Đang tải...</span>
+          </div>
+
+          <button class="btn-icon" id="quickAddSessionBtn" title="Thêm nhanh 25 phút học">+</button>
         </div>
       </header>
 
+      <!-- PAGE CONTENT CONTAINER -->
       <div class="page-container">
-        <!-- 1. TAB CỦA TV1 (DASHBOARD) -->
+
+        <!-- ================= 1. TRANG CHỦ (DASHBOARD) ================= -->
         <section id="pane-dashboard" class="tab-pane active">
+
+          <!-- WELCOME HERO BANNER -->
           <div class="welcome-hero">
+            <div class="hero-glow-1"></div>
+            <div class="hero-glow-2"></div>
+
             <div class="hero-content">
               <span class="hero-pill">🌱 Thói quen nhỏ - Thành tựu lớn</span>
-              <h2 class="hero-title" id="greetingMessage">Chào bạn, chúc ngày mới tốt lành!</h2>
-              <p class="hero-subtitle">Mỗi phút tập trung hôm nay là nền móng tương lai.</p>
+              <h2 class="hero-title" id="greetingMessage">Chào bạn, chúc một ngày học tập hiệu quả!</h2>
+              <p class="hero-subtitle">Mỗi phút tập trung hôm nay là nền móng vững chắc cho mục tiêu tương lai của bạn. Hãy bắt đầu ngay nhé!</p>
               <div class="hero-actions">
-                <button class="btn btn-primary" id="dashboardStartPomoBtn">⏱ Bắt đầu Pomodoro</button>
-                <button class="btn btn-secondary" id="dashboardSetGoalBtn">🎯 Đặt mục tiêu</button>
+                <button class="btn btn-primary" id="dashboardStartPomoBtn">
+                  <span>⏱ Bắt đầu Pomodoro ngay</span>
+                </button>
+                <button class="btn btn-secondary" id="dashboardSetGoalBtn">
+                  <span>🎯 Đặt mục tiêu hôm nay</span>
+                </button>
               </div>
             </div>
+
             <div class="hero-illustration">📚</div>
           </div>
 
+          <!-- 4 STAT CARDS -->
           <div class="stats-grid-4">
+            <!-- Streak Card -->
             <article class="stat-box">
-              <span class="stat-box-label">Chuỗi ngày (Streak)</span>
-              <div class="stat-box-value" id="dashStreakValue">0 <small>ngày</small></div>
+              <div class="stat-box-top">
+                <span class="stat-box-label">Chuỗi ngày học (Streak)</span>
+                <div class="stat-box-icon orange">🔥</div>
+              </div>
+              <div class="stat-box-value" id="dashStreakValue">
+                0 <small>ngày</small>
+              </div>
               <div class="stat-box-subtext" id="dashStreakNote">Học hôm nay để giữ chuỗi!</div>
             </article>
+
+            <!-- Thời gian học hôm nay -->
             <article class="stat-box">
-              <span class="stat-box-label">Thời gian hôm nay</span>
-              <div class="stat-box-value" id="dashTodayTimeValue">0 <small>phút</small></div>
-              <div class="stat-box-subtext">Tích lũy từ các phiên</div>
+              <div class="stat-box-top">
+                <span class="stat-box-label">Thời gian hôm nay</span>
+                <div class="stat-box-icon blue">⏱</div>
+              </div>
+              <div class="stat-box-value" id="dashTodayTimeValue">
+                0 <small>phút</small>
+              </div>
+              <div class="stat-box-subtext" id="dashTodayTimeNote">Tích lũy từ các phiên học</div>
             </article>
+
+            <!-- Mục tiêu hôm nay -->
             <article class="stat-box">
-              <span class="stat-box-label">Mục tiêu hôm nay</span>
-              <div class="stat-box-value" id="dashTodayGoalValue">2 <small>giờ</small></div>
+              <div class="stat-box-top">
+                <span class="stat-box-label">Mục tiêu hôm nay</span>
+                <div class="stat-box-icon purple">🎯</div>
+              </div>
+              <div class="stat-box-value" id="dashTodayGoalValue">
+                2 <small>giờ</small>
+              </div>
               <div class="stat-box-subtext" id="dashTodayGoalPercent">Tiến độ: 0%</div>
             </article>
+
+            <!-- Huy hiệu đã đạt -->
             <article class="stat-box">
-              <span class="stat-box-label">Huy hiệu đạt được</span>
-              <div class="stat-box-value" id="dashBadgesValue">0 <small>/ 5</small></div>
-              <div class="stat-box-subtext">Khám phá thử thách mới</div>
+              <div class="stat-box-top">
+                <span class="stat-box-label">Huy hiệu thành tích</span>
+                <div class="stat-box-icon green">🏆</div>
+              </div>
+              <div class="stat-box-value" id="dashBadgesValue">
+                0 <small>/ 5</small>
+              </div>
+              <div class="stat-box-subtext" id="dashBadgesNote">Khám phá các thử thách mới</div>
             </article>
           </div>
 
+          <!-- 2-COLUMN DASHBOARD GRID -->
           <div class="dashboard-columns">
-            <div style="display:flex; flex-direction:column; gap:20px;">
-              <!-- Tiến độ ngày -->
+
+            <!-- CỘT TRÁI: TIẾN ĐỘ HỌC TẬP & NHIỆM VỤ HỌC TẬP -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+
+              <!-- Tiến độ học tập trong ngày -->
               <article class="card">
-                <div class="card-header"><h3>Tiến độ mục tiêu ngày</h3></div>
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <h3>Tiến độ mục tiêu ngày</h3>
+                    <p>Theo dõi thời gian bạn đã hoàn thành so với mục tiêu đặt ra</p>
+                  </div>
+                  <span class="badge-tag badge-tag-lavender">Hôm nay</span>
+                </div>
+
                 <div class="progress-card-content">
                   <div class="progress-circle-wrap">
                     <svg class="svg-progress-ring" viewBox="0 0 150 150">
@@ -129,69 +223,628 @@
                     </svg>
                     <div class="progress-ring-center">
                       <div class="progress-ring-percent" id="dashCirclePercent">0%</div>
+                      <div class="progress-ring-label">Hoàn thành</div>
                     </div>
                   </div>
+
                   <div class="progress-info">
-                    <h4 id="dashProgressHeadline">Hãy bắt đầu phiên học đầu tiên!</h4>
-                    <p id="dashProgressDesc">Bạn cần tích lũy thêm phút học để đạt chỉ tiêu.</p>
-                    <div class="progress-bar-track"><div class="progress-bar-value" id="dashLinearProgressBar"></div></div>
+                    <h4 class="progress-status-headline" id="dashProgressHeadline">Hãy bắt đầu phiên học đầu tiên!</h4>
+                    <p class="progress-status-desc" id="dashProgressDesc">Bạn cần thêm 120 phút để đạt mục tiêu ngày hôm nay.</p>
+
+                    <div class="progress-bar-track">
+                      <div class="progress-bar-value" id="dashLinearProgressBar"></div>
+                    </div>
+
+                    <div class="progress-numbers">
+                      <span id="dashSpentMinutesText">0 phút đã học</span>
+                      <span id="dashTargetMinutesText">Mục tiêu: 120 phút</span>
+                    </div>
                   </div>
                 </div>
               </article>
-              <!-- Nhiệm vụ Checklist -->
+
+              <!-- Nhiệm vụ học tập trong ngày (Daily Tasks Checklist) -->
               <article class="card">
                 <div class="card-header">
-                  <h3>Nhiệm vụ học tập hôm nay</h3>
-                  <span class="badge-tag badge-tag-blue" id="taskCounterBadge">0/0 xong</span>
+                  <div class="card-title-group">
+                    <h3>Nhiệm vụ học tập hôm nay</h3>
+                    <p>Checklist các đầu việc cần giải quyết trong ngày</p>
+                  </div>
+                  <span class="badge-tag badge-tag-blue" id="taskCounterBadge">0/0 hoàn thành</span>
                 </div>
-                <form id="dailyTaskForm" class="task-form-inline">
-                  <input type="text" id="dailyTaskInput" class="task-input" placeholder="Thêm việc cần làm..." required>
-                  <button type="submit" class="btn btn-primary">+ Thêm</button>
-                </form>
-                <div class="task-list" id="dailyTasksList"></div>
+
+                <div class="tasks-container">
+                  <form id="dailyTaskForm" class="task-form-inline">
+                    <input type="text" id="dailyTaskInput" class="task-input" placeholder="Thêm nhiệm vụ học tập mới (VD: Làm 5 bài tập Toán)..." required>
+                    <button type="submit" class="btn btn-primary" style="padding: 10px 16px;">+ Thêm</button>
+                  </form>
+
+                  <div class="task-list" id="dailyTasksList">
+                    <!-- Danh sách nhiệm vụ sẽ render ở đây -->
+                  </div>
+                </div>
               </article>
+
             </div>
-            <!-- Cột phải Dashboard -->
-            <div style="display:flex; flex-direction:column; gap:20px;">
+
+            <!-- CỘT PHẢI: HOẠT ĐỘNG GẦN ĐÂY & HUY HIỆU VỪA ĐẠT -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+
+              <!-- Phiên học gần nhất -->
               <article class="card">
-                <div class="card-header"><h3>Phiên học gần đây</h3></div>
-                <div class="recent-sessions-list" id="dashboardRecentSessions"></div>
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <h3>Phiên học gần đây</h3>
+                    <p>Lịch sử tập trung được ghi nhận tự động</p>
+                  </div>
+                  <span class="badge-tag badge-tag-mint">Hoạt động</span>
+                </div>
+
+                <div class="recent-sessions-list" id="dashboardRecentSessions">
+                  <!-- Render phiên học gần đây -->
+                </div>
               </article>
+
+              <!-- Huy hiệu vinh danh đạt được -->
               <article class="card">
-                <div class="card-header"><h3>Huy hiệu</h3></div>
-                <div id="dashMiniBadgesList" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <h3>Huy hiệu của bạn</h3>
+                    <p>Ghi nhận nỗ lực kiên trì của bạn</p>
+                  </div>
+                  <button class="btn-chip" id="goToBadgesBtn">Xem tất cả ➔</button>
+                </div>
+
+                <div id="dashMiniBadgesList" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                  <!-- Render huy hiệu mini -->
+                </div>
               </article>
+
             </div>
+
           </div>
+
         </section>
 
-        <!-- 2. PHẦN CỦA TV2 (POMODORO) -->
-        <!-- TV2 paste code HTML của mình vào đây -->
-        <section id="pane-pomodoro" class="tab-pane"></section>
+        <!-- ================= 2. TRANG POMODORO ================= -->
+        <section id="pane-pomodoro" class="tab-pane">
 
-        <!-- 3. PHẦN CỦA TV3 (STATISTICS) -->
-        <!-- TV3 paste code HTML của mình vào đây -->
-        <section id="pane-statistics" class="tab-pane"></section>
+          <div class="pomodoro-container">
 
-        <!-- 4. PHẦN CỦA TV4 (GOALS) -->
-        <!-- TV4 paste code HTML của mình vào đây -->
-        <section id="pane-goals" class="tab-pane"></section>
+            <!-- KHỐI ĐỒNG HỒ TẬP TRUNG -->
+            <article class="card timer-main-card">
 
-        <!-- 5. PHẦN CỦA TV5 (FEEDBACK) -->
-        <!-- TV5 paste code HTML của mình vào đây -->
-        <section id="pane-feedback" class="tab-pane"></section>
+              <!-- Bộ chọn chế độ -->
+              <div class="timer-mode-selector" role="tablist">
+                <button class="mode-btn active" data-mode="focus">🍅 Tập trung</button>
+                <button class="mode-btn" data-mode="short">☕ Nghỉ ngắn</button>
+                <button class="mode-btn" data-mode="long">🌴 Nghỉ dài</button>
+              </div>
+
+              <!-- Vòng quay thời gian trực quan SVG -->
+              <div class="timer-dial-wrapper">
+                <svg class="timer-svg" viewBox="0 0 320 320">
+                  <circle class="timer-circle-track" cx="160" cy="160" r="140"></circle>
+                  <circle class="timer-circle-progress" id="timerProgressCircle" cx="160" cy="160" r="140"></circle>
+                </svg>
+
+                <div class="timer-inner-content">
+                  <span class="timer-mode-badge" id="timerModeBadge">PHIÊN TẬP TRUNG</span>
+                  <div class="timer-digits" id="timerDigitsDisplay">25:00</div>
+                  <div class="timer-state-note" id="timerStateNote">Sẵn sàng bắt đầu phiên học</div>
+                </div>
+              </div>
+
+              <!-- Các nút điều khiển hoạt động chính xác -->
+              <div class="timer-btn-controls">
+                <button class="btn btn-primary btn-timer-primary" id="timerStartPauseBtn">
+                  <span>▶ Bắt đầu</span>
+                </button>
+                <button class="btn btn-outline btn-timer-reset" id="timerResetBtn" title="Đặt lại thời gian">
+                  <span>↺ Đặt lại</span>
+                </button>
+              </div>
+
+              <p class="pomodoro-hint-text">
+                Phương pháp Pomodoro: 25 phút tập trung sâu, sau đó nghỉ 5 phút. Cứ 4 phiên học hãy nghỉ dài 15 phút để phục hồi năng lượng trí não.
+              </p>
+
+            </article>
+
+            <!-- CỘT BÊN: TÙY CHỈNH THỜI GIAN & THÀNH TÍCH POMODORO -->
+            <div class="pomodoro-side-column">
+
+              <!-- Cài đặt thời gian -->
+              <article class="card">
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <h3>Tùy chỉnh thời gian</h3>
+                    <p>Điều chỉnh số phút học và nghỉ theo phong cách của bạn</p>
+                  </div>
+                  <span class="badge-tag badge-tag-blue">Cài đặt</span>
+                </div>
+
+                <form id="timerSettingsForm">
+                  <div class="setting-form-group">
+                    <label for="customFocusInput">
+                      <span>Thời gian tập trung</span>
+                      <small>(1 - 120 phút)</small>
+                    </label>
+                    <div class="input-with-suffix">
+                      <input type="number" id="customFocusInput" min="1" max="120" value="25" required>
+                      <span class="suffix">phút</span>
+                    </div>
+                  </div>
+
+                  <div class="setting-form-group">
+                    <label for="customShortInput">
+                      <span>Thời gian nghỉ ngắn</span>
+                      <small>(1 - 30 phút)</small>
+                    </label>
+                    <div class="input-with-suffix">
+                      <input type="number" id="customShortInput" min="1" max="30" value="5" required>
+                      <span class="suffix">phút</span>
+                    </div>
+                  </div>
+
+                  <div class="setting-form-group">
+                    <label for="customLongInput">
+                      <span>Thời gian nghỉ dài</span>
+                      <small>(1 - 60 phút)</small>
+                    </label>
+                    <div class="input-with-suffix">
+                      <input type="number" id="customLongInput" min="1" max="60" value="15" required>
+                      <span class="suffix">phút</span>
+                    </div>
+                  </div>
+
+                  <button type="submit" class="btn btn-secondary" style="width: 100%; margin-top: 8px;">
+                    Lưu cài đặt thời gian
+                  </button>
+                </form>
+              </article>
+
+              <!-- Thành tích Pomodoro hôm nay -->
+              <article class="card">
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <h3>Phiên Pomodoro hôm nay</h3>
+                    <p>Ghi nhận tự động khi đồng hồ về 00:00</p>
+                  </div>
+                </div>
+
+                <div class="pomodoro-stats-boxes">
+                  <div class="pomo-mini-stat">
+                    <strong id="pomoTodayCount">0</strong>
+                    <span>Phiên hoàn thành</span>
+                  </div>
+                  <div class="pomo-mini-stat">
+                    <strong id="pomoTodayMinutes">0</strong>
+                    <span>Phút tập trung</span>
+                  </div>
+                </div>
+              </article>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- ================= 3. TRANG THỐNG KÊ (STUDY STATISTICS) ================= -->
+        <section id="pane-statistics" class="tab-pane">
+
+          <!-- 4 THẺ TÓM TẮT THỐNG KÊ -->
+          <div class="stats-summary-strip">
+            <article class="stat-box">
+              <div class="stat-box-top">
+                <span class="stat-box-label">Tổng thời gian học</span>
+                <div class="stat-box-icon blue">⏱</div>
+              </div>
+              <div class="stat-box-value" id="statTotalHours">0 <small>giờ</small></div>
+              <div class="stat-box-subtext">Từ lúc bắt đầu sử dụng</div>
+            </article>
+
+            <article class="stat-box">
+              <div class="stat-box-top">
+                <span class="stat-box-label">Tổng ngày đã học</span>
+                <div class="stat-box-icon green">📅</div>
+              </div>
+              <div class="stat-box-value" id="statTotalDays">0 <small>ngày</small></div>
+              <div class="stat-box-subtext">Ngày có ít nhất 1 phiên học</div>
+            </article>
+
+            <article class="stat-box">
+              <div class="stat-box-top">
+                <span class="stat-box-label">Ngày học nhiều nhất</span>
+                <div class="stat-box-icon purple">🚀</div>
+              </div>
+              <div class="stat-box-value" id="statBestDay">Chưa có</div>
+              <div class="stat-box-subtext" id="statBestDayMins">Kỷ lục năng suất cao nhất</div>
+            </article>
+
+            <article class="stat-box">
+              <div class="stat-box-top">
+                <span class="stat-box-label">Số phiên Pomodoro</span>
+                <div class="stat-box-icon orange">🍅</div>
+              </div>
+              <div class="stat-box-value" id="statTotalPomodoros">0 <small>phiên</small></div>
+              <div class="stat-box-subtext">Đã hoàn thành xuất sắc</div>
+            </article>
+          </div>
+
+          <!-- BIỂU ĐỒ 7 NGÀY GẦN NHẤT (SVG BAR CHART) -->
+          <article class="card" style="margin-bottom: 28px;">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h3>Thời gian học 7 ngày gần nhất</h3>
+                <p>Biểu đồ cột so sánh số phút học tập qua từng ngày trong tuần</p>
+              </div>
+              <span class="badge-tag badge-tag-lavender" id="weeklyTotalPill">Tổng tuần: 0 giờ</span>
+            </div>
+
+            <div class="weekly-chart-wrapper">
+              <svg class="svg-chart-container" id="weeklyBarChartSvg" viewBox="0 0 700 240" preserveAspectRatio="none">
+                <!-- SVG Bars sẽ được vẽ động bằng JavaScript -->
+              </svg>
+            </div>
+          </article>
+
+          <!-- GITHUB-STYLE CALENDAR HEATMAP -->
+          <article class="card heatmap-card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h3>Lịch học tập theo ngày (Calendar Heatmap)</h3>
+                <p>Mỗi ô thể hiện mức độ hoạt động học tập trong từng ngày tương tự GitHub</p>
+              </div>
+              <span class="badge-tag badge-tag-blue">Annual Heatmap</span>
+            </div>
+
+            <div class="heatmap-scroll-area">
+              <div class="heatmap-grid" id="calendarHeatmapGrid">
+                <!-- 52 tuần x 7 ngày = 364 ô màu render bằng JavaScript -->
+              </div>
+            </div>
+
+            <div class="heatmap-legend">
+              <span>Ít hơn</span>
+              <div class="legend-cells">
+                <span class="legend-cell heat-level-0" title="0 phút"></span>
+                <span class="legend-cell heat-level-1" title="1 - 30 phút"></span>
+                <span class="legend-cell heat-level-2" title="31 - 60 phút"></span>
+                <span class="legend-cell heat-level-3" title="61 - 120 phút"></span>
+                <span class="legend-cell heat-level-4" title="Trên 120 phút"></span>
+              </div>
+              <span>Nhiều hơn</span>
+            </div>
+          </article>
+
+          <!-- LỊCH SỬ TOÀN BỘ PHIÊN HỌC -->
+          <article class="card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h3>Nhật ký chi tiết các phiên học</h3>
+                <p>Ghi nhận toàn bộ thời gian học để bạn nhìn lại sự kiên trì của bản thân</p>
+              </div>
+              <button class="btn btn-outline" id="clearHistoryBtn" style="padding: 6px 14px; font-size: 12px;">
+                Làm mới nhật ký
+              </button>
+            </div>
+
+            <div class="recent-sessions-list" id="fullSessionHistoryList">
+              <!-- Render toàn bộ lịch sử -->
+            </div>
+          </article>
+
+        </section>
+
+        <!-- ================= 4. TRANG MỤC TIÊU (GOAL SETTINGS) ================= -->
+        <section id="pane-goals" class="tab-pane">
+
+          <div class="goals-page-layout">
+
+            <!-- CỘT TRÁI: FORM ĐẶT MỤC TIÊU NGÀY & FORM TẠO MỤC TIÊU HỌC TẬP -->
+            <div>
+
+              <!-- Đặt mục tiêu số giờ mỗi ngày -->
+              <div class="daily-goal-box">
+                <div class="daily-goal-icon">🎯</div>
+                <h3>Mục tiêu số giờ học mỗi ngày</h3>
+                <p>Thiết lập thời gian bạn muốn dành để trau dồi kiến thức mỗi ngày</p>
+
+                <form id="dailyTargetForm">
+                  <div class="target-input-row">
+                    <input type="number" id="dailyTargetHoursInput" class="target-hours-input" min="0.5" max="14" step="0.5" value="2" required>
+                    <span class="target-label-text">giờ / ngày</span>
+                  </div>
+                  <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    Cập nhật mục tiêu ngày
+                  </button>
+                </form>
+              </div>
+
+              <!-- Thêm mục tiêu học tập mới (CRUD) -->
+              <article class="card">
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <h3>Thêm mục tiêu học tập mới</h3>
+                    <p>Chia nhỏ các khóa học, chứng chỉ hoặc kỳ thi cụ thể</p>
+                  </div>
+                  <span class="badge-tag badge-tag-mint">+ Tạo mới</span>
+                </div>
+
+                <form id="addNewGoalForm" class="goal-form">
+                  <div class="form-group">
+                    <label for="goalTitleInput">Tên mục tiêu *</label>
+                    <input type="text" id="goalTitleInput" class="form-control" placeholder="VD: Lập trình Web Front-end, Ôn thi IELTS..." required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="goalDescInput">Mô tả mục tiêu</label>
+                    <textarea id="goalDescInput" class="form-control" rows="2" placeholder></textarea>
+                  </div>
+
+                  <div class="form-row-2">
+                    <div class="form-group">
+                      <label for="goalTargetHoursInput">Mục tiêu (Số giờ) *</label>
+                      <input type="number" id="goalTargetHoursInput" class="form-control" min="1" max="500" value="20" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="goalCategorySelect">Danh mục</label>
+                      <select id="goalCategorySelect" class="form-control">
+                        <option value="Học thuật">📚 Học thuật / Đại học</option>
+                        <option value="Ngoại ngữ">🗣️ Ngoại ngữ</option>
+                        <option value="Lập trình">💻 Lập trình & CNTT</option>
+                        <option value="Kỹ năng mềm">🎨 Kỹ năng mềm</option>
+                        <option value="Khác">✨ Khác</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary" style="margin-top: 8px;">
+                    + Thêm vào danh sách mục tiêu
+                  </button>
+                </form>
+              </article>
+
+            </div>
+
+            <!-- CỘT PHẢI: DANH SÁCH MỤC TIÊU HỌC TẬP -->
+            <div>
+
+              <div class="goals-list-header">
+                <div>
+                  <h3 style="font-size: 18px; font-weight: 700; color: var(--pastel-navy-dark);">Danh sách mục tiêu học tập</h3>
+                  <p style="font-size: 12px; color: var(--text-muted);">Theo dõi sát sao từng cột mốc học tập của bạn</p>
+                </div>
+
+                <div class="filter-pills">
+                  <button class="filter-pill active" data-filter="all">Tất cả</button>
+                  <button class="filter-pill" data-filter="in_progress">Đang làm</button>
+                  <button class="filter-pill" data-filter="completed">Đã xong</button>
+                </div>
+              </div>
+
+              <!-- Danh sách Card mục tiêu -->
+              <div class="goals-cards-list" id="goalsCardsContainer">
+              
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- HUY HIỆU VÀ GAMIFICATION SHOWCASE -->
+          <article class="card" style="margin-top: 28px;">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h3>Bộ sưu tập Huy hiệu thành tích (Gamification)</h3>
+                <p>Mở khóa huy hiệu để khẳng định sự kiên trì và kỷ luật của chính bạn</p>
+              </div>
+              <span class="badge-tag badge-tag-lavender" id="badgesProgressTag">0/5 Mở khóa</span>
+            </div>
+
+            <div class="badges-showcase-grid" id="fullBadgesShowcaseGrid">
+              <!-- 5 Huy hiệu theo yêu cầu đề bài -->
+            </div>
+          </article>
+
+        </section>
+
+        <!-- ================= 5. TRANG PHẢN HỒI & HỖ TRỢ (FEEDBACK & SUPPORT) ================= -->
+        <section id="pane-feedback" class="tab-pane">
+
+          <!-- HEADER GIỚI THIỆU -->
+          <div class="welcome-hero" style="min-height: auto; padding: 28px 36px; margin-bottom: 24px;">
+            <div class="hero-content">
+              <span class="hero-pill">✉ Lắng nghe & Đồng hành</span>
+              <h2 class="hero-title" style="font-size: 24px;">Gửi phản hồi & Góp ý cho StudyFlow</h2>
+              <p class="hero-subtitle" style="margin-bottom: 0;">
+                Ý kiến đóng góp của bạn là động lực to lớn giúp phân hệ học tập ngày càng hoàn thiện, sang trọng và hữu ích hơn!
+              </p>
+            </div>
+            <div class="hero-illustration" style="font-size: 75px;">💌</div>
+          </div>
+
+          <div class="feedback-layout">
+
+            <!-- CỘT TRÁI: FORM GỬI PHẢN HỒI -->
+            <article class="card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <h3>Biểu mẫu Gửi Phản Hồi</h3>
+                  <p>Hãy chia sẻ cảm nghĩ, báo lỗi hoặc đề xuất tính năng mới</p>
+                </div>
+                <span class="badge-tag badge-tag-lavender">Trực tiếp</span>
+              </div>
+
+              <form id="feedbackForm" class="goal-form">
+                <div class="form-row-2">
+                  <div class="form-group">
+                    <label for="fbSenderName">Họ và tên của bạn *</label>
+                    <input type="text" id="fbSenderName" class="form-control" placeholder="VD: Hoàng Minh" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="fbSenderEmail">Email liên hệ *</label>
+                    <input type="email" id="fbSenderEmail" class="form-control" placeholder="VD: minh@example.com" required>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="fbCategory">Chủ đề phản hồi</label>
+                  <select id="fbCategory" class="form-control">
+                    <option value="Góp ý tính năng mới">💡 Góp ý tính năng mới</option>
+                    <option value="Báo cáo lỗi kỹ thuật">🐞 Báo cáo lỗi kỹ thuật</option>
+                    <option value="Đánh giá giao diện & Trải nghiệm">🎨 Đánh giá giao diện & Trải nghiệm</option>
+                    <option value="Yêu cầu hỗ trợ học tập">📚 Yêu cầu hỗ trợ học tập</option>
+                    <option value="Khác">✨ Khác</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Đánh giá trải nghiệm của bạn (Số sao):</label>
+                  <div class="rating-stars-group" id="ratingStarsContainer">
+                    <span class="star-btn active" data-rating="1">★</span>
+                    <span class="star-btn active" data-rating="2">★</span>
+                    <span class="star-btn active" data-rating="3">★</span>
+                    <span class="star-btn active" data-rating="4">★</span>
+                    <span class="star-btn active" data-rating="5">★</span>
+                    <span id="ratingNumberText" style="font-size: 13px; font-weight: 700; color: #fbbf24; margin-left: 6px;">5 / 5 sao</span>
+                  </div>
+                  <input type="hidden" id="fbRatingValue" value="5">
+                </div>
+
+                <div class="form-group">
+                  <label for="fbMessage">Nội dung phản hồi chi tiết *</label>
+                  <textarea id="fbMessage" class="form-control" rows="4" placeholder="Nhập suy nghĩ, đề xuất hoặc mô tả lỗi bạn gặp phải tại đây..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="margin-top: 6px;">
+                  <span>Gửi phản hồi ngay 🚀</span>
+                </button>
+              </form>
+            </article>
+
+            <!-- CỘT PHẢI: LỊCH SỬ PHẢN HỒI ĐÃ GỬI & HƯỚNG DẪN KẾT NỐI -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+
+              <article class="card">
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <h3>Phản hồi bạn đã gửi</h3>
+                    <p>Lưu trên trình duyệt và tự động tiếp nhận</p>
+                  </div>
+                  <span class="badge-tag badge-tag-mint" id="fbCountBadge">0 phản hồi</span>
+                </div>
+
+                <div class="feedback-history-list" id="feedbackHistoryList">
+                  <!-- Render danh sách feedback -->
+                </div>
+              </article>
+
+
+
+            </div>
+
+          </div>
+
+        </section>
+
       </div>
+
+      <!-- FOOTER -->
+      <footer class="app-footer">
+        <div>
+          <strong>StudyFlow</strong> - Quản lý mục tiêu và thói quen học tập thông minh.
+        </div>
+        <div>
+          
+        </div>
+      </footer>
+
     </main>
+
   </div>
 
-  <!-- Toast Container cho TV5 -->
+  <!-- ================= MODAL MỞ KHÓA HUY HIỆU ================= -->
+  <div class="badge-unlock-modal-backdrop" id="badgeUnlockModal">
+    <div class="badge-unlock-card">
+      <div class="badge-unlock-glow"></div>
+      <div class="badge-unlock-icon" id="unlockModalIcon">🏆</div>
+      <div class="badge-unlock-eyebrow">Chúc mừng thành tích mới!</div>
+      <h3 class="badge-unlock-title" id="unlockModalTitle">Tên huy hiệu</h3>
+      <p class="badge-unlock-desc" id="unlockModalDesc">Mô tả thành tích bạn vừa chinh phục thành công.</p>
+      <button class="btn btn-primary" id="closeUnlockModalBtn" style="min-width: 160px;">
+        Tuyệt vời! Tiếp tục học
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= MODAL SỬA MỤC TIÊU ================= -->
+  <div class="edit-modal-backdrop" id="editGoalModal">
+    <div class="edit-modal-card">
+      <div class="modal-header">
+        <h3>Chỉnh sửa mục tiêu học tập</h3>
+        <button class="modal-close-btn" id="closeEditGoalModalBtn">&times;</button>
+      </div>
+
+      <form id="editGoalForm" class="goal-form">
+        <input type="hidden" id="editGoalId">
+
+        <div class="form-group">
+          <label for="editGoalTitleInput">Tên mục tiêu *</label>
+          <input type="text" id="editGoalTitleInput" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label for="editGoalDescInput">Mô tả</label>
+          <textarea id="editGoalDescInput" class="form-control" rows="2"></textarea>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="editGoalTargetInput">Số giờ mục tiêu *</label>
+            <input type="number" id="editGoalTargetInput" class="form-control" min="1" max="500" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editGoalCurrentInput">Số giờ đã học</label>
+            <input type="number" id="editGoalCurrentInput" class="form-control" min="0" step="0.5" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="editGoalCategorySelect">Danh mục</label>
+          <select id="editGoalCategorySelect" class="form-control">
+            <option value="Học thuật">📚 Học thuật / Đại học</option>
+            <option value="Ngoại ngữ">🗣️ Ngoại ngữ</option>
+            <option value="Lập trình">💻 Lập trình & CNTT</option>
+            <option value="Kỹ năng mềm">🎨 Kỹ năng mềm</option>
+            <option value="Khác">✨ Khác</option>
+          </select>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+          <button type="button" class="btn btn-outline" id="cancelEditGoalBtn">Hủy bỏ</button>
+          <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOOLTIP CHO HEATMAP -->
+  <div class="heatmap-tooltip" id="heatmapTooltip"></div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- JS CỦA 5 THÀNH VIÊN (Nhúng theo thứ tự) -->
-  <script src="js/member1-core.js"></script>
-  <script src="js/member2-pomodoro.js"></script>
-  <script src="js/member3-stats.js"></script>
-  <script src="js/member4-goals.js"></script>
-  <script src="js/member5-feedback.js"></script>
+  <!-- JAVASCRIPT THUẦN -->
+  <script src="script.js"></script>
 </body>
 </html>
+<script src="studyflow-part1-core.js"></script>
+<script src="studyflow-part2-dashboard-pomodoro.js"></script>
+<script src="studyflow-part3-statistics-goals.js"></script>
+<script src="studyflow-part4-feedback-tasks-init.js"></script>
