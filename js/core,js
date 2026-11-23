@@ -1,0 +1,96 @@
+// Quản lý State chung, Router chuyển Tab & Dashboard
+const STORAGE_KEY = "studyflow_data_v2";
+
+window.appState = {
+  settings: { dailyGoalHours: 2, focusDuration: 25, shortDuration: 5, longDuration: 15 },
+  sessions: [], tasks: [], goals: [], badges: [], feedbacks: [], streak: 0
+};
+
+window.getTodayDateKey = function(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
+
+window.saveStateToStorage = function() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(window.appState));
+};
+
+window.loadStateFromStorage = function() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) {
+    try { window.appState = Object.assign(window.appState, JSON.parse(raw)); } catch(e){}
+  }
+};
+
+window.switchTab = function(tabId) {
+  document.querySelectorAll(".nav-link").forEach(btn => btn.classList.toggle("active", btn.getAttribute("data-tab") === tabId));
+  document.querySelectorAll(".tab-pane").forEach(pane => pane.classList.toggle("active", pane.id === `pane-${tabId}`));
+  const titleEl = document.getElementById("pageHeaderTitle");
+  if (titleEl) titleEl.textContent = tabId.toUpperCase();
+  if (tabId === "statistics" && window.renderStatisticsPage) window.renderStatisticsPage();
+};
+
+function setupNavigation() {
+  document.querySelectorAll(".nav-link").forEach(btn => {
+    btn.addEventListener("click", () => window.switchTab(btn.getAttribute("data-tab")));
+  });
+  document.getElementById("dashboardStartPomoBtn")?.addEventListener("click", () => window.switchTab("pomodoro"));
+  document.getElementById("dashboardSetGoalBtn")?.addEventListener("click", () => window.switchTab("goals"));
+}
+
+window.renderDashboard = function() {
+  const today = window.getTodayDateKey();
+  const todayMins = (window.appState.sessions || []).filter(s => s.date === today).reduce((sum, s) => sum + (Number(s.minutes) || 0), 0);
+  const targetMins = (window.appState.settings.dailyGoalHours || 2) * 60;
+  const percent = Math.min(100, Math.round((todayMins / targetMins) * 100));
+
+  document.getElementById("dashStreakValue").innerHTML = `${window.appState.streak || 0} <small>ngày</small>`;
+  document.getElementById("dashTodayTimeValue").innerHTML = `${todayMins} <small>phút</small>`;
+  document.getElementById("dashTodayGoalPercent").textContent = `Tiến độ: ${percent}%`;
+  document.getElementById("dashCirclePercent").textContent = `${percent}%`;
+
+  const circle = document.getElementById("dashboardProgressCircle");
+  if (circle) circle.style.strokeDashoffset = 408.4 - (percent / 100) * 408.4;
+
+  renderDailyTasks();
+};
+
+function renderDailyTasks() {
+  const listEl = document.getElementById("dailyTasksList");
+  if (!listEl) return;
+  listEl.innerHTML = (window.appState.tasks || []).map(t => `
+    <div class="task-item ${t.completed ? 'completed' : ''}">
+      <span onclick="toggleTask('${t.id}')">${t.text}</span>
+      <button onclick="deleteTask('${t.id}')" style="border:none; background:none; cursor:pointer;">✕</button>
+    </div>
+  `).join("");
+}
+
+window.toggleTask = function(id) {
+  const t = window.appState.tasks.find(x => x.id === id);
+  if (t) t.completed = !t.completed;
+  window.saveStateToStorage();
+  renderDailyTasks();
+};
+
+window.deleteTask = function(id) {
+  window.appState.tasks = window.appState.tasks.filter(x => x.id !== id);
+  window.saveStateToStorage();
+  renderDailyTasks();
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  window.loadStateFromStorage();
+  setupNavigation();
+  window.renderDashboard();
+  
+  // Nút thêm việc ngày
+  document.getElementById("dailyTaskForm")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const input = document.getElementById("dailyTaskInput");
+    if (!input.value.trim()) return;
+    window.appState.tasks.push({ id: "t_" + Date.now(), text: input.value.trim(), completed: false });
+    input.value = "";
+    window.saveStateToStorage();
+    renderDailyTasks();
+  });
+});
